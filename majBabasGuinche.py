@@ -44,10 +44,10 @@ def updateSettingsFile(zipFilePath, boxId):
 
     
     
-    if not "numeroBox=" in s:
+    if not "numeroBox=" in s.replace(" ",""):
         print("Erreur, constante numeroBox absente du fichier setting.py")
         sys.exit()
-    p=s.split("numeroBox=")
+    p=s.replace(" ","").split("numeroBox=")
     p[0]+="numeroBox="
     d=p[1].split("\n")
     d[0]=str(boxId)
@@ -259,6 +259,5 @@ def update():
   
         for id,ip in babas.items():
             updatePrg(ip,id,filePath)
-
 
             
