@@ -24,5 +24,5 @@ Les fonctions disponibles sont :
 - ``` stopServers() ``` --> Eteint proprement les serveurs
 - ``` update() ``` --> Lance le programme d'update automatique. On suit ensuite les instructions proposées
 
-Pour une update guidé executer ``` update() ``` puis suivre les informations.
+Pour une update guidée executer ``` update() ``` puis suivre les informations.
 NOTE: Le fichier compressé doit être un zip qui contient les dossiers PICONFLEX2000-CLIENT et PICONFLEX2000-FONCTIONS
