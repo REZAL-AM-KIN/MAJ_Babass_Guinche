@@ -24,7 +24,7 @@ def getBabasList(online=True):
 def checkUpdateFile(filePath):
     with zipfile.ZipFile(filePath, 'r') as zipObj:
         listOfiles = zipObj.namelist()
-        if (not "PICONFLEX2000-CLIENT/" in listOfiles) or (not "PICONFLEX2000-FONCTIONS/" in listOfiles) or (not "PICONFLEX2000-CLIENT/setting.py"):
+        if (not "PICONFLEX2000-CLIENT/" in listOfiles):
             return False
     return True
 
@@ -37,6 +37,15 @@ def updateSettingsFile(zipFilePath, boxId):
     # create a temp copy of the archive without filename            
     with zipfile.ZipFile(zipFilePath, 'r') as zin:
         with zipfile.ZipFile(tmpname, 'w') as zout:
+            
+            listOfiles = zin.namelist()
+            
+            if not ("PICONFLEX2000-CLIENT/setting.py" in listOfiles):
+                print("No settings update.")
+                for item in zin.infolist():
+                    zout.writestr(item, zin.read(item.filename))
+                return tmpname
+            
             s=zin.read("PICONFLEX2000-CLIENT/setting.py").decode()
             for item in zin.infolist():
                 if item.filename != "PICONFLEX2000-CLIENT/setting.py":
@@ -47,13 +56,13 @@ def updateSettingsFile(zipFilePath, boxId):
     if not "numeroBox=" in s.replace(" ",""):
         print("Erreur, constante numeroBox absente du fichier setting.py")
         sys.exit()
-    p=s.replace(" ","").split("numeroBox=")
+    p=s.split("numeroBox =")
     p[0]+="numeroBox="
     d=p[1].split("\n")
     d[0]=str(boxId)
     p[1]="\n".join(d)
     s="".join(p)
-    
+
     # now add filename with its new data
     with zipfile.ZipFile(tmpname, mode='a', compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("PICONFLEX2000-CLIENT/setting.py", s.encode())
@@ -82,7 +91,8 @@ def updatePrg(ip, boxId, updatePath):
     stdin, stdout, stderr = ssh.exec_command("python3 update.py")
     print(stderr.read())
     stdin, stdout, stderr = ssh.exec_command("rm update.py")
-        
+       
+    """
     print("Cleaning old files")
     stdin, stdout, stderr = ssh.exec_command("sudo -k rm -r ~/PICONFLEX2000-CLIENT")
     if ("password".encode('utf-8') in stdout.read()):
@@ -93,6 +103,7 @@ def updatePrg(ip, boxId, updatePath):
     if ("password".encode('utf-8') in stdout.read()):
         stdin.write("pi\n")
         stdin.flush()
+    """
         
     stdin, stdout, stderr = ssh.exec_command("rm update.zip")
         
@@ -105,7 +116,7 @@ def updatePrg(ip, boxId, updatePath):
     sftp.close()
     
     print("Unzipping")
-    stdin, stdout, stderr = ssh.exec_command("unzip ~/update.zip")
+    stdin, stdout, stderr = ssh.exec_command("unzip -o ~/update.zip")
     if stderr.read() != "".encode():
         print(stderr.read().decode())
         print("Unzip fail")
