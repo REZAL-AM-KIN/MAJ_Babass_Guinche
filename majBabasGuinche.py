@@ -77,7 +77,7 @@ def updatePrg(ip, boxId, updatePath):
     
     ssh = prk.SSHClient() 
     ssh.set_missing_host_key_policy(prk.AutoAddPolicy)
-    ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+    #ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
     print("Connection to "+ip)
     try:
         ssh.connect(ip, username="pi", password="pi")
